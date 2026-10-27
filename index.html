@@ -126,7 +126,14 @@ renderAll();trackShipment();
 const SUPABASE_URL = "https://vtsfffstddzrzajplwdq.supabase.co/rest/v1/";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_UJkL1iEQdqT42Upb_-wKUg_9x0-9Xxk";
 const goodsGuardSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-console.log("Goods Guard Supabase client initialized");  
+console.log("Goods Guard Supabase client initialized");
+goodsGuardSupabase
+  .from("shipments")
+  .select('"shipment code", "Status"')
+  .eq("shipment code", "GG-TEST-001")
+  .then(({ data, error }) => {
+    console.log("Goods Guard test:", data, error);
+  });  
 </script>  
 </body>
 </html>
