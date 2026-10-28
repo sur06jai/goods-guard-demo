@@ -126,14 +126,37 @@ renderAll();trackShipment();
 const SUPABASE_URL = "https://vtsfffstddzrzajplwdq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_UJkL1iEQdqT42Upb_-wKUg_9x0-9Xxk";
 const goodsGuardSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-console.log("Goods Guard Supabase client initialized");
-goodsGuardSupabase
-  .from("shipments")
-  .select('"shipment code", "Status"')
-  .eq("shipment code", "GG-TEST-001")
-  .then(({ data, error }) => {
-    alert(error ? "Connection error: " + error.message : "Database response: " + JSON.stringify(data));
-  });  
+(async () => {
+  const email = prompt("Enter your Goods Guard email:");
+  const password = prompt("Enter your Goods Guard password:");
+
+  if (!email || !password) {
+    alert("Login cancelled.");
+    return;
+  }
+
+  const { error: loginError } =
+    await goodsGuardSupabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (loginError) {
+    alert("Login error: " + loginError.message);
+    return;
+  }
+
+  const { data, error } = await goodsGuardSupabase
+    .from("shipments")
+    .select('"shipment code", "Status"')
+    .eq("shipment code", "GG-TEST-001");
+
+  alert(
+    error
+      ? "Shipment error: " + error.message
+      : "Database response: " + JSON.stringify(data)
+  );
+})();  
 </script>  
 </body>
 </html>
